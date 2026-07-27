@@ -1,31 +1,31 @@
-# TurboTube — Vitesse vidéo
+# TurboTube — Video Speed Controller
 
-Extension Chromium légère pour régler la vitesse des vidéos YouTube de **×0,25 à ×16**.
+Lightweight Chromium extension for setting YouTube playback speed from **0.25x to 16x**.
 
-## Fonctions
+## Features
 
-- réglage précis avec curseur et saisie directe ;
-- boutons rapides ×1, ×1,5, ×2, ×3 et ×4 ;
-- mémorisation de la vitesse pendant la navigation YouTube ;
-- bouton de vitesse directement dans le lecteur ;
-- raccourcis `Alt + ↑`, `Alt + ↓` et `Alt + 0` ;
-- aucun serveur, aucune publicité et aucune collecte de données.
+- Precise slider and direct input.
+- Quick buttons for 1x, 1.5x, 2x, 3x, and 4x.
+- Speed preference retained while navigating YouTube.
+- Speed control exposed directly in the player.
+- Shortcuts: `Alt + Up`, `Alt + Down`, and `Alt + 0`.
+- No server, advertising, or data collection.
 
-## Installation dans Chrome, Edge ou Brave
+## Install in Chrome, Edge, or Brave
 
-1. Ouvrir la page des extensions :
-   - Chrome : `chrome://extensions`
-   - Edge : `edge://extensions`
-   - Brave : `brave://extensions`
-2. Activer le **Mode développeur**.
-3. Cliquer sur **Charger l’extension non empaquetée**.
-4. Sélectionner le dossier `YouTube_Speed_Controller`.
-5. Ouvrir ou actualiser une vidéo YouTube, puis cliquer sur l’icône TurboTube.
+1. Open the extensions page:
+   - Chrome: `chrome://extensions`
+   - Edge: `edge://extensions`
+   - Brave: `brave://extensions`
+2. Enable **Developer mode**.
+3. Select **Load unpacked**.
+4. Select the `YouTube_Speed_Controller` directory.
+5. Open or refresh a YouTube video and click the TurboTube icon.
 
-## Confidentialité et périmètre
+## Privacy and scope
 
-TurboTube modifie uniquement la propriété de vitesse du lecteur vidéo présent dans la page. Les préférences sont conservées avec le stockage synchronisé du navigateur. L’extension ne contourne pas les fonctions Premium (téléchargement, lecture hors ligne ou contenus payants) et n’envoie aucune donnée à l’extérieur.
+TurboTube changes only the playback speed property of the video player on the current page. Preferences use the browser's synchronized storage. The extension does not bypass Premium features and does not send data outside the browser.
 
-## Développement
+## Development
 
-Le projet n’utilise ni dépendance ni étape de compilation. Après une modification, actualiser l’extension depuis la page des extensions, puis actualiser YouTube.
+The project has no runtime dependency or build step. After changing the source, reload the extension from the extensions page and refresh YouTube.
