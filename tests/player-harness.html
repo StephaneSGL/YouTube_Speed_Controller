@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>TurboTube Player Harness</title>
+    <link rel="stylesheet" href="../content.css">
+    <style>
+      body { background: #111; color: white; font-family: sans-serif; }
+      #movie_player { background: #222; height: 320px; position: relative; width: 640px; }
+      video { display: block; height: 280px; width: 100%; }
+      .ytp-right-controls { bottom: 0; height: 40px; position: absolute; right: 0; }
+    </style>
+    <script>
+      window.__turboTubeMessages = [];
+      window.chrome = {
+        runtime: {
+          onMessage: {
+            addListener(listener) {
+              window.__turboTubeListener = listener;
+            }
+          }
+        },
+        storage: {
+          sync: {
+            async get() { return {}; },
+            async set(value) { window.__turboTubeLastSaved = value; }
+          },
+          onChanged: { addListener() {} }
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="movie_player">
+      <video class="html5-main-video"></video>
+      <div class="ytp-right-controls"></div>
+    </div>
+    <script src="../content.js"></script>
+  </body>
+</html>

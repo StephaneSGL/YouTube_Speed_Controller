@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "TurboTube — Vitesse vidéo",
+  "version": "1.0.0",
+  "description": "Contrôlez précisément la vitesse des vidéos YouTube, de ×0,25 à ×16.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://m.youtube.com/*"
+  ],
+  "action": {
+    "default_title": "TurboTube — Régler la vitesse",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-v2-16.png",
+      "32": "icons/icon-v2-32.png",
+      "48": "icons/icon-v2-48.png",
+      "128": "icons/icon-v2-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-v2-16.png",
+    "32": "icons/icon-v2-32.png",
+    "48": "icons/icon-v2-48.png",
+    "128": "icons/icon-v2-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

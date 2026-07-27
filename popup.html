@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TurboTube</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div>
+          <p class="eyebrow">TURBOTUBE</p>
+          <h1>Maîtrisez le tempo.</h1>
+        </div>
+        <span id="connection-dot" class="connection-dot" title="État de la connexion"></span>
+      </header>
+
+      <section class="speed-card" aria-labelledby="speed-title">
+        <div class="speed-card__topline">
+          <span id="speed-title">Vitesse actuelle</span>
+          <span id="status" class="status">Connexion…</span>
+        </div>
+
+        <div class="speed-readout">
+          <span class="speed-readout__times">×</span>
+          <input id="speed-input" class="speed-readout__value" type="number" min="0.25" max="16" step="0.05" value="1" aria-label="Vitesse de lecture">
+        </div>
+
+        <input id="speed-slider" class="speed-slider" type="range" min="0.25" max="16" step="0.05" value="1" aria-label="Régler la vitesse">
+        <div class="range-labels" aria-hidden="true"><span>×0,25</span><span>×16</span></div>
+
+        <div id="presets" class="presets" aria-label="Vitesses rapides">
+          <button type="button" data-speed="1">1×</button>
+          <button type="button" data-speed="1.5">1,5×</button>
+          <button type="button" data-speed="2">2×</button>
+          <button type="button" data-speed="3">3×</button>
+          <button type="button" data-speed="4">4×</button>
+        </div>
+      </section>
+
+      <section class="settings" aria-label="Réglages">
+        <label class="setting-row" for="step-select">
+          <span>
+            <strong>Pas des raccourcis</strong>
+            <small>Alt + ↑ ou Alt + ↓</small>
+          </span>
+          <select id="step-select">
+            <option value="0.1">0,10</option>
+            <option value="0.25" selected>0,25</option>
+            <option value="0.5">0,50</option>
+            <option value="1">1,00</option>
+          </select>
+        </label>
+
+        <label class="setting-row" for="remember-toggle">
+          <span>
+            <strong>Garder la vitesse</strong>
+            <small>Pour les prochaines vidéos</small>
+          </span>
+          <input id="remember-toggle" class="toggle-input" type="checkbox" checked>
+          <span class="toggle" aria-hidden="true"></span>
+        </label>
+
+        <label class="setting-row" for="badge-toggle">
+          <span>
+            <strong>Bouton dans le lecteur</strong>
+            <small>Un clic passe au palier suivant</small>
+          </span>
+          <input id="badge-toggle" class="toggle-input" type="checkbox" checked>
+          <span class="toggle" aria-hidden="true"></span>
+        </label>
+      </section>
+
+      <p class="shortcut-hint"><kbd>Alt</kbd><kbd>0</kbd> revient instantanément à ×1</p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

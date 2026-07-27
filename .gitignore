@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+graphify-out/
+.env
+.env.*
+*.log
+__pycache__/
+*.py[cod]
