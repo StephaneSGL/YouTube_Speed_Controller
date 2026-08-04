@@ -1,15 +1,7 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "turboTubeSettings";
-  const MIN_SPEED = 0.25;
-  const MAX_SPEED = 16;
-  const DEFAULT_SETTINGS = {
-    targetSpeed: 1,
-    step: 0.25,
-    rememberSpeed: true,
-    showBadge: true
-  };
+  const { MIN_SPEED, MAX_SPEED, normalizeSpeed, formatSpeed, normalizeSettings } = TurboTube;
 
   const elements = {
     slider: document.getElementById("speed-slider"),
@@ -24,18 +16,8 @@
 
   let activeTabId = null;
   let connected = false;
-  let settings = { ...DEFAULT_SETTINGS };
+  let settings = normalizeSettings();
   let sendTimer = null;
-
-  function clampSpeed(value) {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return 1;
-    return Math.round(Math.min(MAX_SPEED, Math.max(MIN_SPEED, numeric)) * 100) / 100;
-  }
-
-  function formatSpeed(value) {
-    return clampSpeed(value).toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
-  }
 
   function updateProgress(speed) {
     const progress = ((speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) * 100;
@@ -43,7 +25,7 @@
   }
 
   function renderSpeed(value) {
-    const speed = clampSpeed(value);
+    const speed = normalizeSpeed(value);
     elements.slider.value = String(speed);
     elements.input.value = formatSpeed(speed);
     updateProgress(speed);
@@ -81,27 +63,21 @@
 
   async function setSpeed(value, announce = false) {
     clearTimeout(sendTimer);
-    const speed = clampSpeed(value);
+    const speed = normalizeSpeed(value);
     settings.targetSpeed = speed;
     renderSpeed(speed);
-    if (typeof chrome !== "undefined" && chrome.storage?.sync) {
-      await chrome.storage.sync.set({ [STORAGE_KEY]: settings });
-    }
     if (connected) await sendMessage({ type: "SET_SPEED", speed, announce });
   }
 
   async function updateSettings(patch) {
-    settings = { ...settings, ...patch };
+    settings = normalizeSettings({ ...settings, ...patch });
     renderSettings();
-    if (typeof chrome !== "undefined" && chrome.storage?.sync) {
-      await chrome.storage.sync.set({ [STORAGE_KEY]: settings });
-    }
     if (connected) await sendMessage({ type: "UPDATE_SETTINGS", patch });
   }
 
   function bindEvents() {
     elements.slider.addEventListener("input", () => {
-      const speed = clampSpeed(elements.slider.value);
+      const speed = normalizeSpeed(elements.slider.value);
       renderSpeed(speed);
       clearTimeout(sendTimer);
       sendTimer = setTimeout(() => setSpeed(speed), 55);
@@ -145,7 +121,7 @@
       return;
     }
 
-    settings = { ...DEFAULT_SETTINGS, ...state.settings };
+    settings = normalizeSettings(state.settings);
     renderSettings();
     renderSpeed(state.currentSpeed);
     setConnection(true, "Vidéo détectée");

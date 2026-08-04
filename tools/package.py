@@ -1,12 +1,15 @@
+from json import loads
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
-ARCHIVE = DIST / "TurboTube-Chrome-1.0.0.zip"
+VERSION = loads((ROOT / "manifest.json").read_text(encoding="utf-8"))["version"]
+ARCHIVE = DIST / f"TurboTube-Chrome-{VERSION}.zip"
 PACKAGE_FILES = (
     "manifest.json",
+    "shared.js",
     "content.css",
     "content.js",
     "popup.css",
@@ -31,20 +34,9 @@ def main() -> None:
 
     with ZipFile(ARCHIVE) as archive:
         entries = set(archive.namelist())
-        required = {
-            "manifest.json",
-            "content.js",
-            "popup.html",
-            "icons/icon-v2-16.png",
-            "icons/icon-v2-32.png",
-            "icons/icon-v2-48.png",
-            "icons/icon-v2-128.png",
-        }
-        missing = required - entries
-        if missing:
-            raise RuntimeError(f"Fichiers absents du ZIP : {sorted(missing)}")
-        if any("\\" in entry for entry in entries):
-            raise RuntimeError("Le ZIP contient des chemins Windows non portables")
+        expected = {path.relative_to(ROOT).as_posix() for path in package_paths()}
+        if entries != expected:
+            raise RuntimeError(f"Contenu ZIP incorrect : {sorted(entries ^ expected)}")
 
     print(f"Archive créée : {ARCHIVE}")
 

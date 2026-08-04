@@ -1,43 +1,16 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "turboTubeSettings";
-  const MIN_SPEED = 0.25;
-  const MAX_SPEED = 16;
+  const { STORAGE_KEY, normalizeSpeed, formatSpeed, normalizeSettings } = TurboTube;
   const PRESET_CYCLE = [1, 1.5, 2, 2.5, 3, 4];
-  const DEFAULT_SETTINGS = {
-    targetSpeed: 1,
-    step: 0.25,
-    rememberSpeed: true,
-    showBadge: true
-  };
+  const PLAYER_PART_SELECTOR = "video, .ytp-right-controls";
 
-  let settings = { ...DEFAULT_SETTINGS };
+  let settings = normalizeSettings();
   let currentVideo = null;
   let applyingSpeed = false;
   let scanScheduled = false;
   let saveTimer = null;
   let toastTimer = null;
-
-  function clampSpeed(value) {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return 1;
-    return Math.min(MAX_SPEED, Math.max(MIN_SPEED, numeric));
-  }
-
-  function normalizeSpeed(value) {
-    return Math.round(clampSpeed(value) * 100) / 100;
-  }
-
-  function normalizeStep(value) {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return DEFAULT_SETTINGS.step;
-    return Math.round(Math.min(4, Math.max(0.05, numeric)) * 100) / 100;
-  }
-
-  function formatSpeed(value) {
-    return normalizeSpeed(value).toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
-  }
 
   function persistSettings() {
     clearTimeout(saveTimer);
@@ -170,6 +143,13 @@
     requestAnimationFrame(scanPage);
   }
 
+  function pageNeedsScan(mutations) {
+    if (currentVideo && !currentVideo.isConnected) return true;
+    return mutations.some(({ addedNodes }) => [...addedNodes].some((node) =>
+      node instanceof Element && (node.matches(PLAYER_PART_SELECTOR) || node.querySelector(PLAYER_PART_SELECTOR))
+    ));
+  }
+
   function isEditableTarget(target) {
     return target instanceof Element && Boolean(target.closest("input, textarea, select, [contenteditable='true']"));
   }
@@ -212,12 +192,7 @@
     }
 
     if (message.type === "UPDATE_SETTINGS") {
-      settings = {
-        ...settings,
-        ...message.patch,
-        targetSpeed: normalizeSpeed(message.patch?.targetSpeed ?? settings.targetSpeed),
-        step: normalizeStep(message.patch?.step ?? settings.step)
-      };
+      settings = normalizeSettings({ ...settings, ...message.patch });
       persistSettings();
       if (settings.rememberSpeed) setSpeed(settings.targetSpeed, { persist: false });
       updateBadge();
@@ -231,19 +206,21 @@
   chrome.storage.onChanged.addListener((changes, areaName) => {
     const next = changes[STORAGE_KEY]?.newValue;
     if (areaName !== "sync" || !next) return;
-    settings = { ...DEFAULT_SETTINGS, ...next };
+    settings = normalizeSettings(next);
     updateBadge();
   });
 
   async function init() {
     const stored = await chrome.storage.sync.get(STORAGE_KEY);
-    settings = { ...DEFAULT_SETTINGS, ...(stored[STORAGE_KEY] || {}) };
+    settings = normalizeSettings(stored[STORAGE_KEY]);
     document.addEventListener("keydown", handleKeyboard, true);
     document.addEventListener("yt-navigate-finish", () => {
       scheduleScan();
       setTimeout(reapplyRememberedSpeed, 400);
     });
-    new MutationObserver(scheduleScan).observe(document.documentElement, {
+    new MutationObserver((mutations) => {
+      if (pageNeedsScan(mutations)) scheduleScan();
+    }).observe(document.documentElement, {
       childList: true,
       subtree: true
     });

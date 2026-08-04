@@ -6,10 +6,6 @@
   "permissions": [
     "storage"
   ],
-  "host_permissions": [
-    "https://www.youtube.com/*",
-    "https://m.youtube.com/*"
-  ],
   "action": {
     "default_title": "TurboTube — Régler la vitesse",
     "default_popup": "popup.html",
@@ -36,6 +32,7 @@
         "content.css"
       ],
       "js": [
+        "shared.js",
         "content.js"
       ],
       "run_at": "document_idle"
