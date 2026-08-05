@@ -2,16 +2,6 @@
 
 Lightweight Chromium extension for setting YouTube playback speed from **0.25x to 16x**.
 
-<!-- graphy-map:start -->
-## Graphy codebase view
-
-[![Graphy codebase view of YouTube_Speed_Controller showing 29 tracked files, 5 folders, dominant file types and the main areas icons, store-assets, tools, tests.](docs/graphy/overview.svg)](docs/graphy/Graphy.md)
-
-*Tracked repository structure: files, folders, dominant extensions and a readable directory preview.*
-
-[Open full size](docs/graphy/overview.svg) · [Open the accessible Graphy report](docs/graphy/Graphy.md)
-<!-- graphy-map:end -->
-
 ## Features
 
 - Precise slider and direct input.
