@@ -26,8 +26,15 @@ for (const size of [16, 32, 48, 128]) {
 
 const contentSource = await readFile(resolve(root, "content.js"), "utf8");
 assert.match(contentSource, /playbackRate = speed/);
+assert.match(contentSource, /storage\.sync\.set[\s\S]*\.catch\(/);
+assert.match(contentSource, /void init\(\)\.catch\(/);
 
-const context = {};
+const popupSource = await readFile(resolve(root, "popup.js"), "utf8");
+assert.match(popupSource, /void init\(\)\.catch\(/);
+assert.match(popupSource, /Communication avec l’onglet YouTube impossible/);
+
+const errors = [];
+const context = { console: { error: (message) => errors.push(message) } };
 vm.runInNewContext(await readFile(resolve(root, "shared.js"), "utf8"), context);
 assert.equal(context.TurboTube.normalizeSpeed(-1), 0.25);
 assert.equal(context.TurboTube.normalizeSpeed(99), 16);
@@ -35,5 +42,7 @@ assert.equal(context.TurboTube.normalizeSpeed("3.333"), 3.33);
 assert.equal(context.TurboTube.formatSpeed(1.5), "1.5");
 assert.equal(context.TurboTube.normalizeSettings({ step: 99, rememberSpeed: false }).step, 4);
 assert.equal(context.TurboTube.normalizeSettings({ step: 99, rememberSpeed: false }).rememberSpeed, false);
+context.TurboTube.reportError("test", new Error("échec contrôlé"));
+assert.deepEqual(errors, ["[TurboTube] test: échec contrôlé"]);
 
 console.log("TurboTube smoke test: OK");

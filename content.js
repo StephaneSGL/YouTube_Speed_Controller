@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const { STORAGE_KEY, normalizeSpeed, formatSpeed, normalizeSettings } = TurboTube;
+  const { STORAGE_KEY, normalizeSpeed, formatSpeed, normalizeSettings, reportError } = TurboTube;
   const PRESET_CYCLE = [1, 1.5, 2, 2.5, 3, 4];
   const PLAYER_PART_SELECTOR = "video, .ytp-right-controls";
 
@@ -15,7 +15,11 @@
   function persistSettings() {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
-      chrome.storage.sync.set({ [STORAGE_KEY]: settings });
+      void Promise.resolve()
+        .then(() => chrome.storage.sync.set({ [STORAGE_KEY]: settings }))
+        .catch((error) => {
+          reportError("Enregistrement des réglages impossible", error);
+        });
     }, 60);
   }
 
@@ -211,8 +215,12 @@
   });
 
   async function init() {
-    const stored = await chrome.storage.sync.get(STORAGE_KEY);
-    settings = normalizeSettings(stored[STORAGE_KEY]);
+    try {
+      const stored = await chrome.storage.sync.get(STORAGE_KEY);
+      settings = normalizeSettings(stored[STORAGE_KEY]);
+    } catch (error) {
+      reportError("Chargement des réglages impossible, valeurs par défaut utilisées", error);
+    }
     document.addEventListener("keydown", handleKeyboard, true);
     document.addEventListener("yt-navigate-finish", () => {
       scheduleScan();
@@ -227,5 +235,7 @@
     scanPage();
   }
 
-  init();
+  void init().catch((error) => {
+    reportError("Initialisation du script vidéo impossible", error);
+  });
 })();

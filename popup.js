@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const { MIN_SPEED, MAX_SPEED, normalizeSpeed, formatSpeed, normalizeSettings } = TurboTube;
+  const { MIN_SPEED, MAX_SPEED, normalizeSpeed, formatSpeed, normalizeSettings, reportError } = TurboTube;
 
   const elements = {
     slider: document.getElementById("speed-slider"),
@@ -55,7 +55,8 @@
     if (!activeTabId || typeof chrome === "undefined" || !chrome.tabs?.sendMessage) return null;
     try {
       return await chrome.tabs.sendMessage(activeTabId, message);
-    } catch {
+    } catch (error) {
+      reportError("Communication avec l’onglet YouTube impossible", error);
       setConnection(false, "Ouvrez YouTube");
       return null;
     }
@@ -127,5 +128,8 @@
     setConnection(true, "Vidéo détectée");
   }
 
-  init();
+  void init().catch((error) => {
+    reportError("Initialisation de la fenêtre impossible", error);
+    setConnection(false, "Extension indisponible");
+  });
 })();

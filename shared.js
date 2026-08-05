@@ -15,6 +15,13 @@
   const normalizeStep = (value) => normalize(value, DEFAULT_SETTINGS.step, 0.05, 4);
   const formatSpeed = (value) => normalizeSpeed(value).toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
 
+  function reportError(operation, error) {
+    const message = error && typeof error === "object" && typeof error.message === "string"
+      ? error.message
+      : String(error);
+    console.error(`[TurboTube] ${operation}: ${message}`);
+  }
+
   function normalizeSettings(value = {}) {
     const merged = { ...DEFAULT_SETTINGS, ...value };
     return {
@@ -25,5 +32,13 @@
     };
   }
 
-  globalThis.TurboTube = Object.freeze({ STORAGE_KEY, MIN_SPEED, MAX_SPEED, normalizeSpeed, formatSpeed, normalizeSettings });
+  globalThis.TurboTube = Object.freeze({
+    STORAGE_KEY,
+    MIN_SPEED,
+    MAX_SPEED,
+    normalizeSpeed,
+    formatSpeed,
+    normalizeSettings,
+    reportError
+  });
 })();
